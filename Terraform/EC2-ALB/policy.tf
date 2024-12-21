@@ -17,7 +17,10 @@ resource "aws_iam_role" "s3_access_role" {
 EOF
   tags               = local.tags
 }
-
+resource "aws_iam_role_policy_attachment" "ssm_attach" {
+  role       = aws_iam_role.s3_access_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
 resource "aws_iam_role_policy" "s3_code_bucket_access_policy" {
   name   = "${var.product}-${local.environment}-s3-access-policy"
   role   = aws_iam_role.s3_access_role.id

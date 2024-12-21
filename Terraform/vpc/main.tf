@@ -1,7 +1,7 @@
-# resource "aws_eip" "nat" {
-#   count = 1
-#   tags  = local.tags
-# }
+resource "aws_eip" "nat" {
+  count = 1
+  tags  = local.tags
+}
 
 module "vpc" {
   source                        = "terraform-aws-modules/vpc/aws"
@@ -19,9 +19,9 @@ module "vpc" {
   public_outbound_acl_rules     = local.public_outbound_acl_rules
   create_database_subnet_group  = false
   enable_dns_hostnames          = true
-  enable_nat_gateway            = false
-  single_nat_gateway            = false
-  # reuse_nat_ips                 = true
-  # external_nat_ip_ids           = aws_eip.nat.*.id
+  enable_nat_gateway            = true
+  single_nat_gateway            = true
+  reuse_nat_ips                 = true
+  external_nat_ip_ids           = aws_eip.nat.*.id
   tags                          = local.tags
 }

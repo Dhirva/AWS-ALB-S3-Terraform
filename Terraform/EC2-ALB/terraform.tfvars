@@ -10,19 +10,27 @@ environment = {
 
     user_data = <<-EOF
     #!/bin/bash
-    sudo apt update -y
-    sudo apt install -y python3 python3-pip unzip docker.io awscli git
+    cd /tmp
+    sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+    sudo systemctl status amazon-ssm-agent
+    sudo systemctl start amazon-ssm-agent
+    sudo yum install -y yum-utils
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    sudo yum install -y docker
+    sudo systemctl start docker
+    sudo systemctl enable docker
 
+    sudo yum update -y
+    sudo yum install -y python3 python3-pip unzip docker aws-cli git
+    cd /
     git clone https://github.com/Dhirva/AWS-ALB-S3-Terraform.git
     cd AWS-ALB-S3-Terraform
-    S3_BUCKET_NAME=$(aws ssm get-parameter --name '/prod/S3_BUCKET_NAME' --with-decryption --region us-east-1 --query 'Parameter.Value' --output text)
-    echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> .env
+    echo "S3_BUCKET_NAME=$(aws ssm get-parameter --name '/prod/S3_BUCKET_NAME' --with-decryption --region us-east-1 --query 'Parameter.Value' --output text)" >> .env
     echo "AWS_REGION=$(aws ssm get-parameter --name '/prod/AWS_REGION' --with-decryption --region us-east-1 --query 'Parameter.Value' --output text)" >> .env
-    export TF_VAR_s3_bucket_name=${S3_BUCKET_NAME}
     
     sudo docker build -t your-app-name .
 
-    sudo docker run -d -p 80:5000 --name your-container-name your-app-name  
+    sudo docker run -d -p 5000:5000 --name your-container-name your-app-name  
     EOF
 
     key_name = "my-new-key"
@@ -62,7 +70,7 @@ environment = {
           port               = 443
           protocol           = "HTTPS"
           ssl_policy         = "ELBSecurityPolicy-2016-08"
-          certificate_arn    = "arn:aws:acm:us-east-1:930957670050:certificate/4058dba9-033f-4bd1-900b-c49680d5c2f6"
+          certificate_arn    = "arn:aws:acm:us-east-1:943621111361:certificate/752c910f-350c-4edb-8001-4a2f25b3cac5"
           target_group_index = 0
           action_type        = "forward"
         },
@@ -72,7 +80,7 @@ environment = {
         {
           name             = "phoenix-prod-s3-server"
           backend_protocol = "HTTP"
-          backend_port     = 8000
+          backend_port     = 5000
           target_type      = "instance"
           health_check = {
             enabled             = true
@@ -87,7 +95,7 @@ environment = {
     ] }
     sg_config = {
       ingress_cidr_blocks = ["0.0.0.0/0"]
-      ingress_rules       = ["http-80-tcp", "https-443-tcp"]
+      ingress_rules       = ["http-80-tcp"]
       ingress_with_cidr_blocks = [
         {
           from_port   = 22
@@ -96,8 +104,8 @@ environment = {
           cidr_blocks = "0.0.0.0/0"
         },
         {
-          from_port   = 8000
-          to_port     = 8000
+          from_port   = 5000
+          to_port     = 5000
           protocol    = "tcp"
           cidr_blocks = "0.0.0.0/0"
         }

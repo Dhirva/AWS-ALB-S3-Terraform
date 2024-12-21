@@ -25,28 +25,6 @@ module "key_pair" {
   private_key_rsa_bits  = 4096
 }
 
-resource "aws_s3_bucket" "my_bucket" {
-  bucket = var.s3_bucket_name
-  depends_on = [ module.ec2_instance ]
-}
-
-resource "aws_s3_bucket_policy" "public_read_only_policy" {
-  bucket = aws_s3_bucket.my_bucket.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "PublicReadOnlyAccess"
-        Effect    = "Allow"
-        Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "arn:aws:s3:::${aws_s3_bucket.example_bucket.id}/*"
-      }
-    ]
-  })
-}
-
 resource "aws_lb_target_group_attachment" "ec2_attach" {
   target_group_arn = module.alb.target_group_arns[0]
   target_id        = module.ec2_instance.id

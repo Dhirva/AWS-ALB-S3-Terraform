@@ -8,7 +8,7 @@ locals {
   tags = {
     Environment        = local.environment
     Use_case           = "alb"
-    ProjectName        = "phoenix"
+    ProjectName        = "poc"
     Can_be_deleted     = true
     CreatedByTerraform = true
   }

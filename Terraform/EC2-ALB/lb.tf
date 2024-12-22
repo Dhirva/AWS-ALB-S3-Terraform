@@ -9,15 +9,8 @@ module "alb" {
   security_groups    = [module.security_group.security_group_id]
   idle_timeout       = 600
   http_tcp_listeners = local.alb_config.http_tcp_listeners
-
-  # https_listener_rules = local.alb_config.https_listener_rules
-
-  # https_listeners = local.alb_config.https_listeners
-
   target_groups = local.alb_config.target_groups
-
   tags = local.tags
-
 }
 
 module "security_group" {

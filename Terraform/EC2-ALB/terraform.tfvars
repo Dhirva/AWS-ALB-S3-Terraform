@@ -14,6 +14,7 @@ environment = {
       sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
       sudo systemctl start amazon-ssm-agent
       sudo yum install -y yum-utils
+      
       sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
       sudo yum install -y docker
       sudo systemctl start docker
@@ -42,34 +43,6 @@ environment = {
             action_type        = "forward"
           }
         ]
-      # https_listener_rules = [
-      #   {
-      #     https_listener_index = 0
-      #     priority             = 1
-      #     actions = [
-      #       {
-      #         type             = "forward"
-      #         target_group_arn = 0
-      #       }
-      #     ]
-      #     conditions = [{
-      #       path_patterns = ["/"]
-      #       }
-      #     ]
-      #   }
-      # ]
-
-      # https_listeners = [
-      #   {
-      #     port               = 443
-      #     protocol           = "HTTPS"
-      #     ssl_policy         = "ELBSecurityPolicy-2016-08"
-      #     certificate_arn    = "arn:aws:acm:us-east-1:943621111361:certificate/97a51c35-fcdd-4851-9a61-f05980b17874"
-      #     target_group_index = 0
-      #     action_type        = "forward"
-      #   },
-      # ]
-
       target_groups = [
         {
           name             = "phoenix-prod-s3-server"

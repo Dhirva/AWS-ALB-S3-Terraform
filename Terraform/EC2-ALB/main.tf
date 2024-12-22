@@ -5,7 +5,6 @@ module "ec2_instance" {
   name                   = "${var.product}-${local.environment}-ec2-server"
   ami                    = local.env_conf.ami
   instance_type          = local.env_conf.instance_type
-  key_name               = module.key_pair.key_pair_name
   monitoring             = true
   vpc_security_group_ids = [module.security_group.security_group_id]
   subnet_id              = data.terraform_remote_state.vpc.outputs.vpc_details.private_subnets[0]
@@ -14,15 +13,6 @@ module "ec2_instance" {
   iam_instance_profile = aws_iam_instance_profile.profile.id
 
   tags = local.tags
-}
-
-module "key_pair" {
-  source = "terraform-aws-modules/key-pair/aws"
-
-  key_name              = "keypair"
-  create_private_key    = true
-  private_key_algorithm = "RSA"
-  private_key_rsa_bits  = 4096
 }
 
 resource "aws_lb_target_group_attachment" "ec2_attach" {

@@ -33,49 +33,42 @@ environment = {
       sudo docker run -d -p 5000:5000 --name get_s3_data -e S3_BUCKET_NAME=$S3_BUCKET_NAME get_s3_data
     EOF
 
-
-    key_name = "my-new-key"
     alb_config = {
-      # http_tcp_listeners = [
+      http_tcp_listeners = [
+          {
+            port               = 80
+            protocol           = "HTTP"
+            target_group_index = 0
+            action_type        = "forward"
+          }
+        ]
+      # https_listener_rules = [
       #   {
-      #     port               = 80
-      #     protocol           = "HTTP"
+      #     https_listener_index = 0
+      #     priority             = 1
+      #     actions = [
+      #       {
+      #         type             = "forward"
+      #         target_group_arn = 0
+      #       }
+      #     ]
+      #     conditions = [{
+      #       path_patterns = ["/"]
+      #       }
+      #     ]
+      #   }
+      # ]
+
+      # https_listeners = [
+      #   {
+      #     port               = 443
+      #     protocol           = "HTTPS"
+      #     ssl_policy         = "ELBSecurityPolicy-2016-08"
+      #     certificate_arn    = "arn:aws:acm:us-east-1:943621111361:certificate/97a51c35-fcdd-4851-9a61-f05980b17874"
       #     target_group_index = 0
-      #     action_type        = "redirect"
-      #     redirect = {
-      #       port        = "443"
-      #       protocol    = "HTTPS"
-      #       status_code = "HTTP_301"
-      #     }
+      #     action_type        = "forward"
       #   },
       # ]
-      https_listener_rules = [
-        {
-          https_listener_index = 0
-          priority             = 1
-          actions = [
-            {
-              type             = "forward"
-              target_group_arn = 0
-            }
-          ]
-          conditions = [{
-            path_patterns = ["/"]
-            }
-          ]
-        }
-      ]
-
-      https_listeners = [
-        {
-          port               = 443
-          protocol           = "HTTPS"
-          ssl_policy         = "ELBSecurityPolicy-2016-08"
-          certificate_arn    = "arn:aws:acm:us-east-1:943621111361:certificate/752c910f-350c-4edb-8001-4a2f25b3cac5"
-          target_group_index = 0
-          action_type        = "forward"
-        },
-      ]
 
       target_groups = [
         {

@@ -25,29 +25,30 @@ environment = {
     cd /
     git clone https://github.com/Dhirva/AWS-ALB-S3-Terraform.git
     cd AWS-ALB-S3-Terraform
-    echo "S3_BUCKET_NAME=$(aws ssm get-parameter --name '/prod/S3_BUCKET_NAME' --with-decryption --region us-east-1 --query 'Parameter.Value' --output text)" >> .env
     echo "AWS_REGION=$(aws ssm get-parameter --name '/prod/AWS_REGION' --with-decryption --region us-east-1 --query 'Parameter.Value' --output text)" >> .env
     
-    sudo docker build -t your-app-name .
+    sudo docker build -t get_s3_data .
+    S3_BUCKET_NAME=$(aws ssm get-parameter --name '/prod/S3_BUCKET_NAME' --with-decryption --region us-east-1 --query 'Parameter.Value' --output text)
 
-    sudo docker run -d -p 5000:5000 --name your-container-name your-app-name  
+    export S3_BUCKET_NAME=${S3_BUCKET_NAME}
+    sudo docker run -d -p 5000:5000 --name get_s3_data -e S3_BUCKET_NAME=${S3_BUCKET_NAME} get_s3_data
     EOF
 
     key_name = "my-new-key"
     alb_config = {
-      http_tcp_listeners = [
-        {
-          port               = 80
-          protocol           = "HTTP"
-          target_group_index = 0
-          action_type        = "redirect"
-          redirect = {
-            port        = "443"
-            protocol    = "HTTPS"
-            status_code = "HTTP_301"
-          }
-        },
-      ]
+      # http_tcp_listeners = [
+      #   {
+      #     port               = 80
+      #     protocol           = "HTTP"
+      #     target_group_index = 0
+      #     action_type        = "redirect"
+      #     redirect = {
+      #       port        = "443"
+      #       protocol    = "HTTPS"
+      #       status_code = "HTTP_301"
+      #     }
+      #   },
+      # ]
       https_listener_rules = [
         {
           https_listener_index = 0

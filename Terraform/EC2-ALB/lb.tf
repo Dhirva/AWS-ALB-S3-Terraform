@@ -8,7 +8,7 @@ module "alb" {
   subnets            = data.terraform_remote_state.vpc.outputs.vpc_details.public_subnets
   security_groups    = [module.security_group.security_group_id]
   idle_timeout       = 600
-  http_tcp_listeners = local.alb_config.http_tcp_listeners
+  # http_tcp_listeners = local.alb_config.http_tcp_listeners
 
   https_listener_rules = local.alb_config.https_listener_rules
 

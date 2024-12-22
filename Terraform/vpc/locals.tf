@@ -6,7 +6,7 @@ locals {
   tags = {
     Environment        = local.environment
     Use_case           = "vpc"
-    ProjectName        = "One2N"
+    ProjectName        = "poc"
     Can_be_deleted     = true
     CreatedByTerraform = true
   }

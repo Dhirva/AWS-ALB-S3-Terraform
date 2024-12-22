@@ -30,7 +30,7 @@ def list_bucket_content(path):
         content = []
 
         if 'Contents' not in response and 'CommonPrefixes' not in response:
-            abort(404, description="Path not found in S3 bucket.")
+            abort(404, description="Specified path is not found in S3 bucket.")
 
         if 'CommonPrefixes' in response:
             content.extend([cp['Prefix'].rstrip('/').split('/')[-1] for cp in response['CommonPrefixes']])

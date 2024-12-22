@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
 import boto3
 import os
 
@@ -15,7 +15,6 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = os.getenv("AWS_REGION")
 BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
-# BUCKET_NAME = "aws-s3-content-fe-1"
 
 @app.route('/list-bucket-content', defaults={'path': ''}, methods=['GET'])
 @app.route('/list-bucket-content/<path:path>', methods=['GET'])
@@ -29,6 +28,9 @@ def list_bucket_content(path):
         response = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=prefix, Delimiter='/')
 
         content = []
+
+        if 'Contents' not in response and 'CommonPrefixes' not in response:
+            abort(404, description="Path not found in S3 bucket.")
 
         if 'CommonPrefixes' in response:
             content.extend([cp['Prefix'].rstrip('/').split('/')[-1] for cp in response['CommonPrefixes']])

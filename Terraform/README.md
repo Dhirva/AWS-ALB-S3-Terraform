@@ -7,7 +7,6 @@ This repository contains Terraform configurations for setting up a tiered archit
 ## Directory Structure
 
 The project is organized into directories representing different AWS services and components:
-![Directory Structure](https://github.com/sushant9822/aws-s3-assigment/blob/main/screenshots/terraform-structure.png)
 - `loadbalancer` - Application Load Balancer
 - `ec2` - Amazon Elastic Compute Cloud
 - `vpc` - AWS Virtual Private Cloud
